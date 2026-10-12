@@ -1,55 +1,52 @@
+<script setup lang="ts">
+import { Heart } from 'lucide-vue-next';
+</script>
+
 <template>
-  <footer class="border-t border-obsidian-700/60 bg-obsidian-950 py-10 mt-12">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8 text-xs">
-        <div class="space-y-2">
-          <span class="text-sm font-bold text-white font-mono flex items-center gap-1.5">
-            Ram<span class="text-cyber-emerald">Vector</span>
-          </span>
-          <p class="text-slate-400 leading-relaxed">
-            The blazing-fast client-side SVG optimizer, path cleaner and XSS sanitizer operating 100% in RAM.
+  <footer class="border-t border-slate-200/80 dark:border-slate-800/80 bg-white/60 dark:bg-velvet-950/60 backdrop-blur-md py-10 mt-12 transition-colors">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 space-y-6">
+      <!-- High-intent PSEO Quick Links -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+        <div>
+          <h4 class="font-bold text-slate-800 dark:text-slate-200 mb-2 uppercase text-[11px] tracking-wider">Features</h4>
+          <ul class="space-y-1.5 text-slate-500 dark:text-slate-400">
+            <li><a href="#" class="hover:text-azure-600 transition-colors">In-Browser SVGO v3</a></li>
+            <li><a href="#" class="hover:text-azure-600 transition-colors">Batch ZIP Processing</a></li>
+            <li><a href="#" class="hover:text-azure-600 transition-colors">Security XSS Purge</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-slate-800 dark:text-slate-200 mb-2 uppercase text-[11px] tracking-wider">Framework Exporters</h4>
+          <ul class="space-y-1.5 text-slate-500 dark:text-slate-400">
+            <li><a href="#" class="hover:text-azure-600 transition-colors">SVG to React (TSX)</a></li>
+            <li><a href="#" class="hover:text-azure-600 transition-colors">SVG to Vue 3 (SFC)</a></li>
+            <li><a href="#" class="hover:text-azure-600 transition-colors">SVG to Svelte / Data URI</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-slate-800 dark:text-slate-200 mb-2 uppercase text-[11px] tracking-wider">Tool Cleaners</h4>
+          <ul class="space-y-1.5 text-slate-500 dark:text-slate-400">
+            <li><a href="#" class="hover:text-azure-600 transition-colors">Figma SVG Cruft Stripper</a></li>
+            <li><a href="#" class="hover:text-azure-600 transition-colors">Illustrator XML Cleaner</a></li>
+            <li><a href="#" class="hover:text-azure-600 transition-colors">Inkscape Metadata Minifier</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-slate-800 dark:text-slate-200 mb-2 uppercase text-[11px] tracking-wider">Privacy & Guarantee</h4>
+          <p class="text-slate-500 dark:text-slate-400 leading-relaxed text-[11px]">
+            100% In-RAM Execution. Your vectors never touch any remote backend, cloud queue, or analytics pipeline.
           </p>
-        </div>
-
-        <div>
-          <h4 class="font-mono text-slate-300 uppercase tracking-wider mb-2 font-semibold">Features</h4>
-          <ul class="space-y-1.5 text-slate-400">
-            <li>In-RAM WebAssembly Processing</li>
-            <li>Interactive Split-Slider Studio</li>
-            <li>Multi-File Parallel Batch Queue</li>
-            <li>Figma & Illustrator Cruft Stripper</li>
-            <li>XSS Security Sanitization</li>
-          </ul>
-        </div>
-
-        <div>
-          <h4 class="font-mono text-slate-300 uppercase tracking-wider mb-2 font-semibold">Code Generators</h4>
-          <ul class="space-y-1.5 text-slate-400">
-            <li>React JSX/TSX Component</li>
-            <li>Vue 3 SFC Template</li>
-            <li>Svelte Component</li>
-            <li>Base64 CSS Data URI</li>
-            <li>Clean Minified SVG Markup</li>
-          </ul>
-        </div>
-
-        <div>
-          <h4 class="font-mono text-slate-300 uppercase tracking-wider mb-2 font-semibold">Open Source & Privacy</h4>
-          <ul class="space-y-1.5 text-slate-400">
-            <li>100% Client-Side Sandbox</li>
-            <li>Zero Data Retention</li>
-            <li>Free for Commercial Use</li>
-            <li>MIT Licensed on GitHub</li>
-          </ul>
         </div>
       </div>
 
-      <div class="border-t border-obsidian-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-slate-500">
-        <p>© 2026 RamVector. Crafted with precision for developers.</p>
-        <p class="flex items-center gap-2">
-          <span>v1.0.0</span>
-          <span>•</span>
-          <span>Zero Server Uploads</span>
+      <!-- Copyright and Love note -->
+      <div class="pt-6 border-t border-slate-200/60 dark:border-slate-800/60 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 dark:text-slate-400 gap-2">
+        <p>© 2026 RamVector • Built for speed, privacy, and creative joy.</p>
+        <p class="flex items-center gap-1">
+          Crafted with <Heart class="w-3.5 h-3.5 text-rose-500 fill-rose-500" /> for the modern web
         </p>
       </div>
     </div>

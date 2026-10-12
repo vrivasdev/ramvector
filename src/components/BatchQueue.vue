@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import { Download, Trash2, CheckCircle2, AlertCircle, Loader2 } from 'lucide-vue-next';
+import { FileArchive, CheckCircle2, AlertCircle, Trash2, ArrowRight } from 'lucide-vue-next';
 import type { QueueItem } from '../types';
 
 defineProps<{
-  items: QueueItem[];
+  queue: QueueItem[];
   totalOriginalSize: number;
   totalOptimizedSize: number;
   totalSavingsPercentage: number;
-  isProcessing: boolean;
 }>();
 
 defineEmits<{
@@ -18,101 +17,93 @@ defineEmits<{
 </script>
 
 <template>
-  <div class="space-y-4">
-    <!-- Queue Header Summary Bar -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl border border-obsidian-700 bg-obsidian-900 shadow-xl">
-      <div class="flex items-center space-x-4">
-        <div>
-          <span class="text-xs font-mono text-slate-400">Total Queue:</span>
-          <p class="text-lg font-bold font-mono text-white">
-            {{ items.length }} <span class="text-xs text-slate-400 font-normal">Files</span>
-          </p>
-        </div>
-        <div class="h-8 w-px bg-obsidian-700"></div>
-        <div>
-          <span class="text-xs font-mono text-slate-400">Net Compression:</span>
-          <p class="text-lg font-bold font-mono text-cyber-emerald">
-            -{{ totalSavingsPercentage }}%
-          </p>
-        </div>
-        <div class="h-8 w-px bg-obsidian-700"></div>
-        <div>
-          <span class="text-xs font-mono text-slate-400">Size Delta:</span>
-          <p class="text-xs font-mono text-slate-300 mt-1">
-            {{ (totalOriginalSize / 1024).toFixed(1) }} KB → <strong class="text-cyber-emerald">{{ (totalOptimizedSize / 1024).toFixed(1) }} KB</strong>
-          </p>
-        </div>
+  <div class="rounded-3xl border border-slate-200/90 dark:border-slate-800 bg-white/80 dark:bg-velvet-900/80 backdrop-blur-xl p-6 sm:p-7 shadow-card-soft space-y-6">
+    <!-- Header with Aggregated Savings Banner -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200/80 dark:border-slate-800/80">
+      <div>
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <span>Batch Drop Queue</span>
+          <span class="text-xs font-mono px-2.5 py-0.5 rounded-full bg-azure-50 dark:bg-azure-950/60 text-azure-700 dark:text-azure-400 border border-azure-200 dark:border-azure-800 font-bold">
+            {{ queue.length }} files
+          </span>
+        </h2>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+          Parallel multi-file optimization with instant client-side ZIP packaging
+        </p>
       </div>
 
+      <!-- Action buttons -->
       <div class="flex items-center space-x-3">
         <button
           type="button"
-          @click="$emit('downloadZip')"
-          :disabled="isProcessing || items.length === 0"
-          class="flex items-center gap-2 px-4 py-2 rounded-lg bg-cyber-emerald hover:bg-cyber-emerald/90 disabled:opacity-50 text-obsidian-950 font-semibold text-xs transition-colors shadow-lg shadow-cyber-emerald/20 cursor-pointer"
+          @click="$emit('clearQueue')"
+          class="flex items-center space-x-1.5 px-3 py-2 text-xs font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition-colors border border-transparent hover:border-rose-200 dark:hover:border-rose-800/50"
         >
-          <Download class="w-4 h-4" />
-          <span>Download All (.zip)</span>
+          <Trash2 class="w-3.5 h-3.5" />
+          <span>Clear All</span>
         </button>
 
         <button
           type="button"
-          @click="$emit('clearQueue')"
-          class="p-2 text-slate-400 hover:text-red-400 transition-colors rounded-lg hover:bg-obsidian-800 border border-obsidian-700"
-          title="Clear Queue"
+          @click="$emit('downloadZip')"
+          class="flex items-center space-x-2 px-5 py-2.5 rounded-2xl text-xs font-bold text-white bg-gradient-to-r from-azure-500 to-spring-500 hover:from-azure-600 hover:to-spring-600 shadow-md shadow-azure-500/20 active:scale-[0.98] transition-all"
         >
-          <Trash2 class="w-4 h-4" />
+          <FileArchive class="w-4 h-4" />
+          <span>Download All (.zip)</span>
         </button>
       </div>
     </div>
 
-    <!-- Items Grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+    <!-- Aggregate Stats Strip: Warm Creative Pastel Gradient -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 p-4 rounded-2xl bg-gradient-to-r from-spring-50 via-azure-50 to-lavender-50 dark:from-spring-950/30 dark:via-azure-950/30 dark:to-lavender-950/30 border border-azure-200/80 dark:border-azure-800/50">
+      <div>
+        <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 uppercase">Original Total</p>
+        <p class="text-base font-bold font-mono text-slate-900 dark:text-white">
+          {{ (totalOriginalSize / 1024).toFixed(2) }} KB
+        </p>
+      </div>
+      <div>
+        <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 uppercase">Cleaned Total</p>
+        <p class="text-base font-bold font-mono text-emerald-600 dark:text-spring-400">
+          {{ (totalOptimizedSize / 1024).toFixed(2) }} KB
+        </p>
+      </div>
+      <div>
+        <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 uppercase">Total Bandwidth Saved</p>
+        <p class="text-base font-black font-mono bg-gradient-to-r from-emerald-600 to-azure-600 dark:from-spring-400 dark:to-azure-400 bg-clip-text text-transparent">
+          -{{ totalSavingsPercentage }}%
+        </p>
+      </div>
+    </div>
+
+    <!-- Items List Table -->
+    <div class="space-y-2 max-h-[420px] overflow-y-auto pr-1">
       <div
-        v-for="item in items"
+        v-for="item in queue"
         :key="item.id"
         @click="$emit('selectItem', item)"
-        class="flex items-center justify-between p-3.5 rounded-lg border border-obsidian-700/80 bg-obsidian-900/60 hover:bg-obsidian-800/80 hover:border-slate-500 cursor-pointer transition-all duration-150"
+        class="flex items-center justify-between p-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-800 hover:border-azure-300 dark:hover:border-azure-600 bg-slate-50/70 dark:bg-velvet-850 hover:bg-white dark:hover:bg-velvet-800 cursor-pointer transition-all duration-150 group shadow-sm"
       >
-        <div class="flex items-center space-x-3 min-w-0">
-          <div class="w-10 h-10 rounded-lg bg-obsidian-950 border border-obsidian-700 flex items-center justify-center p-1.5 flex-shrink-0 svg-checkerboard">
-            <div v-if="item.optimizedSvgText" class="w-full h-full flex items-center justify-center" v-html="item.optimizedSvgText"></div>
-            <div v-else class="text-[10px] text-slate-500 font-mono">SVG</div>
+        <div class="flex items-center space-x-3 truncate pr-4">
+          <div class="w-8 h-8 rounded-xl bg-white dark:bg-velvet-900 border border-slate-200 dark:border-slate-700 flex items-center justify-center shrink-0">
+            <CheckCircle2 v-if="item.status === 'done'" class="w-4 h-4 text-emerald-500" />
+            <AlertCircle v-else class="w-4 h-4 text-rose-500" />
           </div>
-
-          <div class="min-w-0">
-            <p class="text-xs font-medium text-white truncate max-w-[140px]" :title="item.name">
+          <div class="truncate">
+            <p class="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate group-hover:text-azure-600 dark:group-hover:text-azure-400 transition-colors">
               {{ item.name }}
             </p>
-            <p class="text-[10px] font-mono text-slate-400 mt-0.5">
-              {{ (item.originalSize / 1024).toFixed(1) }} KB
-              <span v-if="item.optimizedSize" class="text-cyber-emerald">
-                → {{ (item.optimizedSize / 1024).toFixed(1) }} KB
-              </span>
+            <p class="text-[11px] font-mono text-slate-500">
+              {{ (item.originalSize / 1024).toFixed(2) }} KB → <strong class="text-emerald-600 dark:text-spring-400">{{ ((item.optimizedSize || item.originalSize) / 1024).toFixed(2) }} KB</strong>
             </p>
           </div>
         </div>
 
-        <!-- Status / Savings Badge -->
-        <div class="flex items-center pl-2 flex-shrink-0">
-          <span
-            v-if="item.status === 'done'"
-            class="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-cyber-emerald/10 text-cyber-emerald border border-cyber-emerald/30 flex items-center gap-1"
-          >
-            <CheckCircle2 class="w-3 h-3" /> -{{ item.savingsPercentage }}%
+        <div class="flex items-center space-x-3 shrink-0">
+          <span class="text-xs font-mono font-bold px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+            -{{ item.savingsPercentage }}%
           </span>
-          <span
-            v-else-if="item.status === 'processing'"
-            class="text-[11px] font-mono px-2 py-0.5 rounded bg-cyber-cyan/10 text-cyber-cyan border border-cyber-cyan/30 flex items-center gap-1"
-          >
-            <Loader2 class="w-3 h-3 animate-spin" /> Optimizing
-          </span>
-          <span
-            v-else-if="item.status === 'error'"
-            class="text-[11px] font-mono px-2 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/30 flex items-center gap-1"
-          >
-            <AlertCircle class="w-3 h-3" /> Error
-          </span>
+          <ArrowRight class="w-4 h-4 text-slate-400 group-hover:text-azure-500 group-hover:translate-x-0.5 transition-all" />
         </div>
       </div>
     </div>

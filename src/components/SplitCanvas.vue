@@ -7,6 +7,7 @@ const props = defineProps<{
   optimizedSvg: string;
   originalSize: number;
   optimizedSize: number;
+  isDarkMode: boolean;
 }>();
 
 const splitPos = ref(50); // percentage 0 to 100
@@ -49,50 +50,44 @@ const zoomScaleStyle = computed(() => ({
 </script>
 
 <template>
-  <div class="relative flex flex-col rounded-xl border border-obsidian-700 bg-obsidian-900 overflow-hidden shadow-2xl">
+  <div class="relative flex flex-col rounded-3xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-velvet-900 overflow-hidden shadow-card-soft">
     <!-- Viewport Header Toolbar -->
-    <div class="flex items-center justify-between px-4 py-2.5 border-b border-obsidian-700/80 bg-obsidian-800/80 text-xs font-mono">
-      <div class="flex items-center space-x-4">
-        <span class="text-slate-400">
-          BEFORE: <strong class="text-white font-medium">{{ (originalSize / 1024).toFixed(2) }} KB</strong>
+    <div class="flex items-center justify-between px-5 py-3 border-b border-slate-200/80 dark:border-slate-800/80 bg-slate-50/70 dark:bg-velvet-850/70 backdrop-blur-md text-xs font-mono">
+      <div class="flex items-center space-x-3 sm:space-x-4">
+        <span class="text-slate-500 dark:text-slate-400">
+          BEFORE: <strong class="text-slate-800 dark:text-slate-200 font-semibold">{{ (originalSize / 1024).toFixed(2) }} KB</strong>
         </span>
-        <span class="text-slate-600">|</span>
-        <span class="text-cyber-emerald">
-          AFTER: <strong>{{ (optimizedSize / 1024).toFixed(2) }} KB</strong>
+        <span class="text-slate-300 dark:text-slate-700">|</span>
+        <span class="text-emerald-600 dark:text-spring-400">
+          AFTER: <strong class="font-bold">{{ (optimizedSize / 1024).toFixed(2) }} KB</strong>
         </span>
       </div>
 
       <!-- Zoom Controls -->
-      <div class="flex items-center space-x-1.5 bg-obsidian-900 px-2 py-1 rounded-md border border-obsidian-700">
+      <div class="flex items-center space-x-1 bg-white dark:bg-velvet-900 px-2 py-1 rounded-xl border border-slate-200 dark:border-slate-700/80 shadow-sm">
         <button
           type="button"
           @click="zoomOut"
-          class="p-1 hover:text-cyber-emerald text-slate-400 transition-colors"
-          title="Zoom Out"
+          class="p-1 hover:text-azure-600 text-slate-500 dark:text-slate-400 transition-colors"
+          title="Zoom out"
         >
           <ZoomOut class="w-3.5 h-3.5" />
         </button>
-        <button
-          type="button"
-          @click="resetZoom"
-          class="text-[11px] font-mono px-1.5 hover:text-white text-slate-300"
-          title="Reset to 100%"
-        >
+        <span class="px-1 text-[11px] font-semibold text-slate-700 dark:text-slate-300 min-w-[36px] text-center">
           {{ zoom }}%
-        </button>
+        </span>
         <button
           type="button"
           @click="zoomIn"
-          class="p-1 hover:text-cyber-emerald text-slate-400 transition-colors"
-          title="Zoom In"
+          class="p-1 hover:text-azure-600 text-slate-500 dark:text-slate-400 transition-colors"
+          title="Zoom in"
         >
           <ZoomIn class="w-3.5 h-3.5" />
         </button>
-        <span class="text-obsidian-700">|</span>
         <button
           type="button"
           @click="resetZoom"
-          class="p-1 hover:text-cyber-cyan text-slate-400 transition-colors"
+          class="p-1 hover:text-azure-600 text-slate-500 dark:text-slate-400 transition-colors ml-0.5 border-l border-slate-200 dark:border-slate-700"
           title="Reset View"
         >
           <RotateCcw class="w-3.5 h-3.5" />
@@ -100,9 +95,10 @@ const zoomScaleStyle = computed(() => ({
       </div>
     </div>
 
-    <!-- Draggable Canvas Area -->
+    <!-- Dual Split Canvas Viewport -->
     <div
-      class="relative h-[380px] sm:h-[460px] svg-checkerboard select-none cursor-ew-resize overflow-hidden"
+      class="relative w-full h-[400px] sm:h-[460px] select-none cursor-ew-resize overflow-hidden"
+      :class="isDarkMode ? 'svg-checkerboard-dark' : 'svg-checkerboard-light'"
       @mousedown="isDragging = true"
       @mouseup="isDragging = false"
       @mouseleave="isDragging = false"
@@ -111,48 +107,63 @@ const zoomScaleStyle = computed(() => ({
       @touchend="isDragging = false"
       @touchmove="onTouchMove"
     >
-      <!-- Original Layer (Left side) -->
+      <!-- Optimized (Background Right Side) -->
       <div
-        class="absolute inset-0 flex items-center justify-center overflow-hidden pointer-events-none"
-        :style="{ clipPath: `inset(0 ${100 - splitPos}% 0 0)` }"
+        class="absolute inset-0 flex items-center justify-center p-8 transition-transform duration-75 pointer-events-none"
+        :style="zoomScaleStyle"
       >
         <div
-          class="w-full h-full flex items-center justify-center p-8 transition-transform duration-75"
-          :style="zoomScaleStyle"
-          v-html="originalSvg"
-        ></div>
-        <div class="absolute top-3 left-3 bg-obsidian-950/80 border border-obsidian-700 text-slate-300 text-[10px] font-mono px-2 py-0.5 rounded backdrop-blur">
-          BEFORE (Original)
-        </div>
-      </div>
-
-      <!-- Optimized Layer (Right side) -->
-      <div
-        class="absolute inset-0 flex items-center justify-center overflow-hidden pointer-events-none"
-        :style="{ clipPath: `inset(0 0 0 ${splitPos}%)` }"
-      >
-        <div
-          class="w-full h-full flex items-center justify-center p-8 transition-transform duration-75"
-          :style="zoomScaleStyle"
+          class="w-full h-full max-w-[320px] max-h-[320px] flex items-center justify-center [&>svg]:w-full [&>svg]:h-full [&>svg]:object-contain drop-shadow-md"
           v-html="optimizedSvg"
         ></div>
-        <div class="absolute top-3 right-3 bg-obsidian-950/80 border border-cyber-emerald/40 text-cyber-emerald text-[10px] font-mono px-2 py-0.5 rounded backdrop-blur">
-          AFTER (RAM Cleaned)
+      </div>
+
+      <!-- Original (Clipped Foreground Left Side) -->
+      <div
+        class="absolute inset-0 overflow-hidden border-r border-transparent pointer-events-none"
+        :style="{ width: splitPos + '%' }"
+      >
+        <div
+          class="absolute inset-0 flex items-center justify-center p-8 transition-transform duration-75"
+          :style="{
+            ...zoomScaleStyle,
+            width: (100 / (splitPos / 100)) + '%'
+          }"
+        >
+          <div
+            class="w-full h-full max-w-[320px] max-h-[320px] flex items-center justify-center [&>svg]:w-full [&>svg]:h-full [&>svg]:object-contain drop-shadow-md opacity-90"
+            v-html="originalSvg"
+          ></div>
         </div>
       </div>
 
-      <!-- Divider Split Line -->
+      <!-- Draggable Split Divider Line & Handle -->
       <div
-        class="absolute top-0 bottom-0 w-0.5 bg-cyber-emerald cursor-ew-resize pointer-events-none"
-        :style="{ left: `${splitPos}%` }"
+        class="absolute top-0 bottom-0 pointer-events-none flex flex-col items-center justify-center -ml-[1.5px]"
+        :style="{ left: splitPos + '%' }"
       >
-        <!-- Center Handle Knob -->
-        <div class="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-7 h-7 rounded-full bg-obsidian-900 border-2 border-cyber-emerald flex items-center justify-center shadow-lg shadow-cyber-emerald/30">
+        <!-- Vertical colorful accent line -->
+        <div class="w-[3px] h-full bg-gradient-to-b from-spring-400 via-azure-400 to-lavender-400 shadow-sm"></div>
+
+        <!-- Center Handle -->
+        <div class="absolute w-8 h-8 rounded-full bg-white dark:bg-velvet-800 border-2 border-azure-400 flex items-center justify-center shadow-lg pointer-events-auto cursor-ew-resize hover:scale-110 transition-transform">
           <div class="flex space-x-0.5">
-            <span class="w-0.5 h-3 bg-cyber-emerald rounded"></span>
-            <span class="w-0.5 h-3 bg-cyber-emerald rounded"></span>
+            <div class="w-0.5 h-3 bg-azure-500 rounded-full"></div>
+            <div class="w-0.5 h-3 bg-azure-500 rounded-full"></div>
           </div>
         </div>
+      </div>
+
+      <!-- Left / Right Floating Tags -->
+      <div class="absolute bottom-3 left-3 pointer-events-none">
+        <span class="text-[10px] font-mono font-semibold px-2 py-1 rounded-md bg-slate-900/60 text-white backdrop-blur-sm border border-white/20">
+          BEFORE (Original)
+        </span>
+      </div>
+      <div class="absolute bottom-3 right-3 pointer-events-none">
+        <span class="text-[10px] font-mono font-semibold px-2 py-1 rounded-md bg-spring-600/90 text-white backdrop-blur-sm shadow-sm">
+          AFTER (Cleaned)
+        </span>
       </div>
     </div>
   </div>

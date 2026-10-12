@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { UploadCloud, FileCode2 } from 'lucide-vue-next';
+import { UploadCloud, Sparkles, FolderUp } from 'lucide-vue-next';
 
 const emit = defineEmits<{
   (e: 'filesSelected', files: File[]): void;
@@ -36,8 +36,10 @@ function handleFileChange(e: Event) {
     @dragleave.prevent="isDragging = false"
     @drop.prevent="handleDrop"
     @click="fileInput?.click()"
-    class="border-2 border-dashed rounded-xl p-8 sm:p-12 text-center cursor-pointer transition-all duration-200 relative group overflow-hidden"
-    :class="isDragging ? 'border-cyber-emerald bg-cyber-emerald/10 shadow-lg shadow-cyber-emerald/10' : 'border-obsidian-700 bg-obsidian-900/60 hover:border-slate-500 hover:bg-obsidian-900'"
+    class="border-2 border-dashed rounded-3xl p-8 sm:p-11 text-center cursor-pointer transition-all duration-200 relative group overflow-hidden shadow-card-soft"
+    :class="isDragging 
+      ? 'border-spring-500 bg-spring-50/70 dark:bg-spring-950/20 scale-[1.01] shadow-glow-spring' 
+      : 'border-slate-300 dark:border-slate-700/80 bg-white/70 dark:bg-velvet-900/60 hover:border-azure-400 dark:hover:border-azure-500 hover:bg-slate-50/60 dark:hover:bg-velvet-850/70 backdrop-blur-md'"
   >
     <input
       ref="fileInput"
@@ -49,27 +51,31 @@ function handleFileChange(e: Event) {
     />
 
     <div class="flex flex-col items-center justify-center space-y-4">
-      <div class="w-16 h-16 rounded-2xl bg-obsidian-800 border border-obsidian-700 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
-        <UploadCloud class="w-8 h-8 text-cyber-emerald" />
+      <!-- Joyful gradient upload icon -->
+      <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-spring-100 via-azure-100 to-lavender-100 dark:from-spring-950/50 dark:via-azure-950/50 dark:to-lavender-950/50 border border-azure-200/80 dark:border-azure-800/60 flex items-center justify-center group-hover:scale-110 group-hover:rotate-1 transition-all duration-300 shadow-sm">
+        <UploadCloud class="w-8 h-8 text-azure-600 dark:text-azure-400" />
       </div>
 
-      <div class="space-y-1">
-        <h3 class="text-base sm:text-lg font-semibold text-white tracking-tight">
-          Drop SVG files here or <span class="text-cyber-emerald underline underline-offset-4 decoration-cyber-emerald/40 hover:decoration-cyber-emerald">browse files</span>
+      <div class="space-y-1.5">
+        <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight">
+          Drop SVG files here or <span class="text-azure-600 dark:text-azure-400 underline underline-offset-4 decoration-azure-300 dark:decoration-azure-600 hover:text-azure-700">browse files</span>
         </h3>
-        <p class="text-xs text-slate-400 font-mono">
-          Compress paths directly inside browser RAM • Zero server latency
+        <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">
+          Compress paths and cleanse cruft directly inside browser RAM • Zero server latency
         </p>
       </div>
 
-      <div class="flex items-center gap-3 pt-2 text-[11px] font-mono text-slate-500">
-        <span class="flex items-center gap-1">
-          <FileCode2 class="w-3.5 h-3.5 text-cyber-cyan" /> Multi-file Batch
+      <!-- Feature badges -->
+      <div class="flex flex-wrap items-center justify-center gap-2 pt-1">
+        <span class="inline-flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1 rounded-full bg-spring-50 dark:bg-spring-950/50 text-spring-700 dark:text-spring-300 border border-spring-200 dark:border-spring-800">
+          <FolderUp class="w-3 h-3 text-spring-600 dark:text-spring-400" /> Multi-file Batch
         </span>
-        <span>•</span>
-        <span>Drag & Drop 50+ files</span>
-        <span>•</span>
-        <span>Figma & Illustrator Cruft Stripping</span>
+        <span class="inline-flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1 rounded-full bg-azure-50 dark:bg-azure-950/50 text-azure-700 dark:text-azure-300 border border-azure-200 dark:border-azure-800">
+          <Sparkles class="w-3 h-3 text-azure-600 dark:text-azure-400" /> Clean Precision Slider
+        </span>
+        <span class="inline-flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1 rounded-full bg-coral-50 dark:bg-coral-950/50 text-coral-700 dark:text-coral-300 border border-coral-200 dark:border-coral-800">
+          ⚡ 100% Free & Private
+        </span>
       </div>
     </div>
   </div>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { Copy, Check, Download, Code2 } from 'lucide-vue-next';
+import { Copy, Check, Download, Code2, Sparkles } from 'lucide-vue-next';
 import { generateExportCode } from '../services/codeGenerator';
 import type { ExportFormat } from '../types';
 
@@ -45,50 +45,56 @@ function downloadSingleSvg() {
 </script>
 
 <template>
-  <div class="rounded-xl border border-obsidian-700 bg-obsidian-900 p-5 shadow-xl space-y-4">
+  <div class="rounded-3xl border border-slate-200/90 dark:border-slate-800 bg-white/80 dark:bg-velvet-900/80 backdrop-blur-xl p-6 shadow-card-soft space-y-4">
     <!-- Format Tabs Header -->
-    <div class="flex items-center justify-between">
-      <div class="flex items-center gap-1.5 text-xs font-mono text-slate-300 uppercase tracking-wider">
-        <Code2 class="w-3.5 h-3.5 text-cyber-cyan" /> 1-Click Code Export
+    <div class="flex items-center justify-between flex-wrap gap-2">
+      <div class="flex items-center gap-1.5 text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+        <Code2 class="w-4 h-4 text-azure-500" /> 1-Click Code Export
       </div>
 
-      <div class="flex items-center bg-obsidian-950 p-0.5 rounded-lg border border-obsidian-700">
+      <div class="flex items-center bg-slate-100 dark:bg-velvet-800/90 p-1 rounded-xl border border-slate-200/80 dark:border-slate-700/60 shadow-inner">
         <button
           type="button"
           v-for="fmt in (['react', 'vue', 'svelte', 'raw', 'datauri'] as ExportFormat[])"
           :key="fmt"
           @click="activeFormat = fmt"
-          class="px-2.5 py-1 text-[11px] font-mono rounded transition-colors uppercase"
-          :class="activeFormat === fmt ? 'bg-cyber-emerald/20 text-cyber-emerald font-semibold border border-cyber-emerald/40' : 'text-slate-400 hover:text-white'"
+          class="px-2.5 py-1 text-[11px] font-mono font-bold rounded-lg transition-all duration-150 uppercase"
+          :class="activeFormat === fmt 
+            ? 'bg-white dark:bg-slate-700 text-azure-600 dark:text-azure-300 shadow-sm ring-1 ring-slate-900/5' 
+            : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'"
         >
-          {{ fmt === 'raw' ? 'SVG' : fmt }}
+          {{ fmt }}
         </button>
       </div>
     </div>
 
-    <!-- Code Block Preview -->
-    <div class="relative rounded-lg bg-obsidian-950 border border-obsidian-800 p-3.5 max-h-48 overflow-y-auto font-mono text-xs text-slate-300">
-      <pre class="whitespace-pre-wrap break-all leading-relaxed"><code>{{ codeOutput }}</code></pre>
+    <!-- Code Display Box with syntax contrast -->
+    <div class="relative rounded-2xl bg-slate-950 p-4 border border-slate-800 shadow-inner group">
+      <pre class="text-xs font-mono text-emerald-300 overflow-x-auto max-h-56 scrollbar-thin"><code>{{ codeOutput }}</code></pre>
     </div>
 
-    <!-- Actions -->
-    <div class="grid grid-cols-2 gap-3 pt-1">
+    <!-- Friendly Action Buttons -->
+    <div class="flex items-center space-x-3 pt-1">
       <button
         type="button"
         @click="copyCode"
-        class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-cyber-emerald hover:bg-cyber-emerald/90 text-obsidian-950 font-semibold text-xs transition-colors shadow-lg shadow-cyber-emerald/10 cursor-pointer"
+        class="flex-1 flex items-center justify-center space-x-2 py-3 px-4 rounded-2xl text-xs font-bold transition-all duration-200 shadow-md"
+        :class="isCopied 
+          ? 'bg-emerald-600 text-white shadow-emerald-500/25 scale-[1.02]' 
+          : 'bg-gradient-to-r from-emerald-500 to-spring-500 hover:from-emerald-600 hover:to-spring-600 text-white shadow-emerald-500/20 active:scale-[0.99]'"
       >
-        <component :is="isCopied ? Check : Copy" class="w-4 h-4" />
+        <Check v-if="isCopied" class="w-4 h-4" />
+        <Copy v-else class="w-4 h-4" />
         <span>{{ isCopied ? 'Copied to Clipboard!' : 'Copy Code' }}</span>
       </button>
 
       <button
         type="button"
         @click="downloadSingleSvg"
-        class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-obsidian-800 hover:bg-obsidian-700 text-slate-200 border border-obsidian-700 font-medium text-xs transition-colors cursor-pointer"
+        class="flex-1 flex items-center justify-center space-x-2 py-3 px-4 rounded-2xl text-xs font-bold bg-slate-100 hover:bg-slate-200 dark:bg-velvet-800 dark:hover:bg-velvet-750 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition-all duration-200 shadow-sm hover:shadow"
       >
-        <Download class="w-4 h-4" />
-        <span>Download SVG</span>
+        <Download class="w-4 h-4 text-azure-500" />
+        <span>Download Clean SVG</span>
       </button>
     </div>
   </div>

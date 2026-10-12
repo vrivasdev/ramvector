@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ToggleLeft, ToggleRight, Settings2 } from 'lucide-vue-next';
+import { ToggleLeft, ToggleRight, Sparkles } from 'lucide-vue-next';
 import type { OptimizerConfig } from '../types';
 
 defineProps<{
@@ -7,81 +7,52 @@ defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: 'updateConfig', key: keyof OptimizerConfig, value: boolean): void;
+  (e: 'toggle', key: keyof OptimizerConfig, val: boolean): void;
 }>();
+
+const toggles: { key: keyof OptimizerConfig; label: string; desc: string }[] = [
+  { key: 'multipass', label: 'Multipass Compression', desc: 'Run recursive optimization passes for minimal bytes' },
+  { key: 'removeComments', label: 'Purge XML Comments', desc: 'Strip design software author credits and metadata' },
+  { key: 'cleanupIds', label: 'Minify / Clean Element IDs', desc: 'Shorten or remove redundant SVG anchor IDs' },
+  { key: 'convertColors', label: 'Color Hex Optimization', desc: 'Convert RGB/named colors into shortest 3-digit hex' },
+  { key: 'removeViewBox', label: 'Preserve ViewBox Scale', desc: 'Maintain responsive scaling viewBox definition' },
+  { key: 'convertPathData', label: 'Path Data Rounding', desc: 'Snap curve segments to chosen decimal precision' }
+];
 </script>
 
 <template>
-  <div class="rounded-xl border border-obsidian-700 bg-obsidian-900 p-5 shadow-xl space-y-4">
-    <div class="flex items-center justify-between">
-      <span class="text-xs font-mono text-slate-300 flex items-center gap-1.5 uppercase tracking-wider">
-        <Settings2 class="w-3.5 h-3.5 text-cyber-emerald" /> Optimization Plugins
+  <div class="rounded-3xl border border-slate-200/90 dark:border-slate-800 bg-white/80 dark:bg-velvet-900/80 backdrop-blur-xl p-6 shadow-card-soft space-y-4">
+    <div class="flex items-center justify-between border-b border-slate-200/80 dark:border-slate-800/80 pb-3">
+      <span class="text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+        <Sparkles class="w-4 h-4 text-lavender-500" /> Optimization Filters
       </span>
+      <span class="text-[11px] font-mono text-slate-400">SVGO v3 Engine</span>
     </div>
 
-    <div class="space-y-2.5">
-      <!-- Toggle Item -->
+    <div class="space-y-3 pt-1">
       <div
-        @click="emit('updateConfig', 'removeComments', !config.removeComments)"
-        class="flex items-center justify-between p-2.5 rounded-lg bg-obsidian-800/60 hover:bg-obsidian-800 border border-obsidian-700/50 cursor-pointer transition-colors"
+        v-for="item in toggles"
+        :key="item.key"
+        @click="emit('toggle', item.key, !config[item.key])"
+        class="flex items-center justify-between p-2.5 rounded-2xl hover:bg-slate-50 dark:hover:bg-velvet-850/80 cursor-pointer transition-colors duration-150 select-none group border border-transparent hover:border-slate-200/80 dark:hover:border-slate-700/60"
       >
-        <div>
-          <p class="text-xs font-medium text-slate-200">Remove Comments</p>
-          <p class="text-[10px] text-slate-500 font-mono">Strip XML comments & metadata</p>
+        <div class="space-y-0.5 pr-2">
+          <p class="text-xs font-semibold text-slate-800 dark:text-slate-200 group-hover:text-azure-600 dark:group-hover:text-azure-400 transition-colors">
+            {{ item.label }}
+          </p>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400">
+            {{ item.desc }}
+          </p>
         </div>
-        <component
-          :is="config.removeComments ? ToggleRight : ToggleLeft"
-          class="w-6 h-6 transition-colors"
-          :class="config.removeComments ? 'text-cyber-emerald' : 'text-slate-600'"
-        />
-      </div>
 
-      <!-- Toggle Item -->
-      <div
-        @click="emit('updateConfig', 'stripEditorCruft', !config.stripEditorCruft)"
-        class="flex items-center justify-between p-2.5 rounded-lg bg-obsidian-800/60 hover:bg-obsidian-800 border border-obsidian-700/50 cursor-pointer transition-colors"
-      >
-        <div>
-          <p class="text-xs font-medium text-slate-200">Strip Editor Cruft</p>
-          <p class="text-[10px] text-slate-500 font-mono">Remove Figma & Illustrator XML data</p>
-        </div>
-        <component
-          :is="config.stripEditorCruft ? ToggleRight : ToggleLeft"
-          class="w-6 h-6 transition-colors"
-          :class="config.stripEditorCruft ? 'text-cyber-emerald' : 'text-slate-600'"
-        />
-      </div>
-
-      <!-- Toggle Item -->
-      <div
-        @click="emit('updateConfig', 'purgeScriptsAndEvents', !config.purgeScriptsAndEvents)"
-        class="flex items-center justify-between p-2.5 rounded-lg bg-obsidian-800/60 hover:bg-obsidian-800 border border-obsidian-700/50 cursor-pointer transition-colors"
-      >
-        <div>
-          <p class="text-xs font-medium text-slate-200">Security Sanitizer</p>
-          <p class="text-[10px] text-slate-500 font-mono">Purge malicious scripts & inline JS</p>
-        </div>
-        <component
-          :is="config.purgeScriptsAndEvents ? ToggleRight : ToggleLeft"
-          class="w-6 h-6 transition-colors"
-          :class="config.purgeScriptsAndEvents ? 'text-cyber-emerald' : 'text-slate-600'"
-        />
-      </div>
-
-      <!-- Toggle Item -->
-      <div
-        @click="emit('updateConfig', 'multipass', !config.multipass)"
-        class="flex items-center justify-between p-2.5 rounded-lg bg-obsidian-800/60 hover:bg-obsidian-800 border border-obsidian-700/50 cursor-pointer transition-colors"
-      >
-        <div>
-          <p class="text-xs font-medium text-slate-200">Multipass Compression</p>
-          <p class="text-[10px] text-slate-500 font-mono">Run recursive optimization passes</p>
-        </div>
-        <component
-          :is="config.multipass ? ToggleRight : ToggleLeft"
-          class="w-6 h-6 transition-colors"
-          :class="config.multipass ? 'text-cyber-emerald' : 'text-slate-600'"
-        />
+        <button
+          type="button"
+          class="text-xl transition-transform duration-150"
+          :class="config[item.key] ? 'text-spring-500' : 'text-slate-300 dark:text-slate-600'"
+        >
+          <ToggleRight v-if="config[item.key]" class="w-7 h-7" />
+          <ToggleLeft v-else class="w-7 h-7" />
+        </button>
       </div>
     </div>
   </div>

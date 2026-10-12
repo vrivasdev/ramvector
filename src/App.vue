@@ -14,14 +14,28 @@ import { runOptimization, DEFAULT_OPTIMIZER_CONFIG } from './services/optimizer'
 import { createZipArchive, downloadZip } from './services/zipPackager';
 import type { OptimizerConfig, QueueItem } from './types';
 
-// State
+// Theme state (Default to Fresh Luminous Light Theme)
+const isDarkMode = ref(false);
+
+function toggleTheme() {
+  isDarkMode.value = !isDarkMode.value;
+  if (isDarkMode.value) {
+    document.documentElement.classList.add('dark');
+    localStorage.setItem('ramvector_theme', 'dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+    localStorage.setItem('ramvector_theme', 'light');
+  }
+}
+
+// Navigation & Config
 const activeMode = ref<'studio' | 'batch'>('studio');
 const config = reactive<OptimizerConfig>({ ...DEFAULT_OPTIMIZER_CONFIG });
 const queue = ref<QueueItem[]>([]);
 const isBatchProcessing = ref(false);
 
 // Active Studio Item
-const currentFileName = ref('ram-icon.svg');
+const currentFileName = ref('hummingbird-creative.svg');
 const currentOriginalSvg = ref('');
 const currentOptimizedSvg = ref('');
 const currentOriginalSize = ref(0);
@@ -29,20 +43,57 @@ const currentOptimizedSize = ref(0);
 const currentSavingsPercentage = ref(0);
 const currentDurationMs = ref(0);
 
-// Sample SVG to wow the user immediately on first load
-const SAMPLE_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
-  <!-- Generator: Adobe Illustrator 28.0.0, SVG Export Plug-In -->
+// Fresh, colorful, and peaceful hummingbird vector illustration
+const CREATIVE_HUMMINGBIRD_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320" width="320" height="320">
+  <!-- Generator: RamVector Creative Studio Suite -->
   <defs>
-    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#06b6d4;stop-opacity:1" />
+    <linearGradient id="wingGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="50%" stop-color="#818cf8" />
+      <stop offset="100%" stop-color="#c084fc" />
     </linearGradient>
+    <linearGradient id="bodyGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#10b981" />
+      <stop offset="40%" stop-color="#06b6d4" />
+      <stop offset="100%" stop-color="#3b82f6" />
+    </linearGradient>
+    <linearGradient id="tailGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f43f5e" />
+      <stop offset="60%" stop-color="#fb923c" />
+      <stop offset="100%" stop-color="#fbbf24" />
+    </linearGradient>
+    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#0284c7" flood-opacity="0.22" />
+    </filter>
   </defs>
-  <g id="Layer_1">
-    <rect width="200.000000" height="200.000000" rx="36.000000" fill="#111726" stroke="#1e293b" stroke-width="4.000000"/>
-    <path d="M60.123456 140.987654 L100.000000 60.111222 L140.543210 140.987654 Z" fill="url(#grad1)"/>
-    <circle cx="100.000000" cy="115.000000" r="16.500000" fill="#0a0d14" stroke="#10b981" stroke-width="3.000000"/>
-    <text x="100.000000" y="172.000000" font-family="Inter, sans-serif" font-size="12.000000" font-weight="bold" fill="#f1f5f9" text-anchor="middle">RAMVECTOR</text>
+
+  <!-- Ambient background aura halo -->
+  <circle cx="160.000000" cy="160.000000" r="140.000000" fill="url(#wingGrad1)" opacity="0.08" />
+  <circle cx="160.000000" cy="160.000000" r="110.000000" fill="url(#bodyGrad)" opacity="0.06" />
+
+  <g id="Hummingbird_Art" filter="url(#softGlow)">
+    <!-- Feather Tail Splashes -->
+    <path d="M 120.000000 230.000000 C 105.123456 265.456789 80.987654 285.345678 60.000000 295.000000 C 75.000000 270.000000 95.000000 240.000000 135.000000 215.000000 Z" fill="url(#tailGrad)" />
+    <path d="M 130.000000 225.000000 C 120.000000 260.000000 100.000000 280.000000 85.000000 290.000000 C 100.000000 265.000000 115.000000 240.000000 145.000000 210.000000 Z" fill="#fb923c" opacity="0.9" />
+
+    <!-- Main Spread Wing Feathers -->
+    <path d="M 165.000000 145.000000 C 150.000000 100.000000 110.000000 65.000000 50.000000 45.000000 C 85.000000 75.000000 115.000000 110.000000 135.000000 155.000000 Z" fill="url(#wingGrad1)" />
+    <path d="M 175.000000 150.000000 C 165.000000 115.000000 135.000000 85.000000 80.000000 68.000000 C 110.000000 95.000000 135.000000 125.000000 150.000000 162.000000 Z" fill="#818cf8" opacity="0.85" />
+    <path d="M 185.000000 155.000000 C 180.000000 130.000000 155.000000 105.000000 110.000000 90.000000 C 135.000000 115.000000 155.000000 140.000000 165.000000 170.000000 Z" fill="#c084fc" opacity="0.8" />
+
+    <!-- Hummingbird Body & Breast -->
+    <path d="M 160.000000 140.000000 C 185.000000 130.000000 215.000000 140.000000 230.000000 165.000000 C 240.000000 180.000000 235.000000 205.000000 210.000000 220.000000 C 185.000000 235.000000 150.000000 225.000000 135.000000 200.000000 C 130.000000 180.000000 140.000000 150.000000 160.000000 140.000000 Z" fill="url(#bodyGrad)" />
+
+    <!-- Head & Crest -->
+    <circle cx="215.000000" cy="130.000000" r="22.000000" fill="#0ea5e9" />
+    <path d="M 225.000000 115.000000 C 235.000000 105.000000 240.000000 95.000000 245.000000 85.000000 C 238.000000 98.000000 230.000000 108.000000 215.000000 112.000000 Z" fill="#38bdf8" />
+
+    <!-- Slender Beak -->
+    <path d="M 233.000000 128.000000 L 290.000000 125.000000 L 234.000000 133.000000 Z" fill="#0369a1" />
+
+    <!-- Sparkle Eye -->
+    <circle cx="222.000000" cy="127.000000" r="3.500000" fill="#ffffff" />
+    <circle cx="223.000000" cy="126.000000" r="1.200000" fill="#0f172a" />
   </g>
 </svg>`;
 
@@ -86,7 +137,6 @@ async function handleFilesSelected(files: File[]) {
     });
   }
 
-  // Load first file into Studio Inspector
   if (files.length > 0 && queue.value.length > 0) {
     const latest = queue.value[queue.value.length - files.length];
     selectQueueItem(latest);
@@ -133,36 +183,59 @@ const totalSavingsPercentage = computed(() => {
 });
 
 onMounted(() => {
-  currentOriginalSvg.value = SAMPLE_SVG;
-  currentFileName.value = 'ram-sample.svg';
+  const savedTheme = localStorage.getItem('ramvector_theme');
+  if (savedTheme === 'dark') {
+    isDarkMode.value = true;
+    document.documentElement.classList.add('dark');
+  } else {
+    isDarkMode.value = false;
+    document.documentElement.classList.remove('dark');
+  }
+
+  currentOriginalSvg.value = CREATIVE_HUMMINGBIRD_SVG;
+  currentFileName.value = 'hummingbird-creative.svg';
   reoptimizeCurrent();
 });
 </script>
 
 <template>
-  <div class="min-h-screen flex flex-col bg-obsidian-950 text-slate-100">
-    <!-- Header Navigation -->
-    <HeaderBar v-model:activeMode="activeMode" />
+  <div 
+    class="min-h-screen flex flex-col transition-colors duration-300"
+    :class="isDarkMode ? 'luminous-bg-dark text-slate-100' : 'luminous-bg-light text-slate-800'"
+  >
+    <!-- Header Navigation Bar -->
+    <HeaderBar 
+      v-model:activeMode="activeMode" 
+      :isDarkMode="isDarkMode"
+      @toggleTheme="toggleTheme"
+    />
 
-    <!-- Main Application Canvas -->
+    <!-- Main Interactive Studio Container -->
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8 space-y-8">
-      <!-- Drag & Drop Zone -->
+      <!-- Drag & Drop Upload Zone -->
       <DropZone @filesSelected="handleFilesSelected" />
 
       <!-- Studio Mode View -->
       <div v-if="activeMode === 'studio'" class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        <!-- Left: Interactive Vector Viewport -->
-        <div class="lg:col-span-7 space-y-4">
+        <!-- Left: Interactive Vector Viewport Canvas -->
+        <div class="lg:col-span-7 space-y-5">
           <SplitCanvas
             :originalSvg="currentOriginalSvg"
             :optimizedSvg="currentOptimizedSvg"
             :originalSize="currentOriginalSize"
             :optimizedSize="currentOptimizedSize"
+            :isDarkMode="isDarkMode"
+          />
+
+          <!-- 1-Click Code Exporter Drawer -->
+          <CodeDrawer
+            :optimizedSvgText="currentOptimizedSvg"
+            :fileName="currentFileName"
           />
         </div>
 
-        <!-- Right: Studio Controls, Telemetry & Export Drawer -->
-        <div class="lg:col-span-5 space-y-4">
+        <!-- Right: Control Panel & Telemetry HUD -->
+        <div class="lg:col-span-5 space-y-5">
           <TelemetryPanel
             :originalSize="currentOriginalSize"
             :optimizedSize="currentOptimizedSize"
@@ -171,41 +244,35 @@ onMounted(() => {
           />
 
           <PrecisionSlider
-            :modelValue="config.precision"
+            v-model="config.precision"
             @update:modelValue="handlePrecisionChange"
           />
 
           <PluginToggles
             :config="config"
-            @updateConfig="handleConfigToggle"
-          />
-
-          <CodeDrawer
-            :optimizedSvgText="currentOptimizedSvg"
-            :fileName="currentFileName"
+            @toggle="handleConfigToggle"
           />
         </div>
       </div>
 
-      <!-- Batch Queue View -->
+      <!-- Batch Mode View -->
       <div v-else class="space-y-6">
         <BatchQueue
-          :items="queue"
+          :queue="queue"
           :totalOriginalSize="totalOriginalSize"
           :totalOptimizedSize="totalOptimizedSize"
           :totalSavingsPercentage="totalSavingsPercentage"
-          :isProcessing="isBatchProcessing"
           @downloadZip="handleBatchZip"
           @clearQueue="clearQueue"
           @selectItem="selectQueueItem"
         />
       </div>
 
-      <!-- Ethical Sponsorship Ad Slot (Zero CLS) -->
+      <!-- Privacy-Friendly Ethical Ads Banner -->
       <EthicalAdBanner />
     </main>
 
-    <!-- Programmatic SEO Footer -->
+    <!-- SEO & Footer -->
     <SeoFooter />
   </div>
 </template>

@@ -3,44 +3,84 @@
 @tailwind utilities;
 
 :root {
+  color-scheme: light;
+}
+
+.dark {
   color-scheme: dark;
 }
 
 body {
   margin: 0;
-  background-color: #06080e;
-  color: #f1f5f9;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Custom scrollbars */
+/* Custom friendly scrollbars */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0a0d14;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
+  background: #cbd5e1;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+.dark ::-webkit-scrollbar-thumb {
   background: #334155;
 }
 
-/* Checkerboard background for SVG transparency preview */
-.svg-checkerboard {
-  background-color: #0a0d14;
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* Soft, peaceful checkerboard for SVG transparency */
+.svg-checkerboard-light {
+  background-color: #ffffff;
   background-image: 
-    linear-gradient(45deg, #111726 25%, transparent 25%),
-    linear-gradient(-45deg, #111726 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, #111726 75%),
-    linear-gradient(-45deg, transparent 75%, #111726 75%);
+    linear-gradient(45deg, #f1f5f9 25%, transparent 25%),
+    linear-gradient(-45deg, #f1f5f9 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #f1f5f9 75%),
+    linear-gradient(-45deg, transparent 75%, #f1f5f9 75%);
   background-size: 16px 16px;
   background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+}
+
+.svg-checkerboard-dark {
+  background-color: #0f172a;
+  background-image: 
+    linear-gradient(45deg, #1e293b 25%, transparent 25%),
+    linear-gradient(-45deg, #1e293b 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #1e293b 75%),
+    linear-gradient(-45deg, transparent 75%, #1e293b 75%);
+  background-size: 16px 16px;
+  background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+}
+
+/* Luminous aura background glow */
+.luminous-bg-light {
+  background-color: #f8fafc;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.12) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(168, 85, 247, 0.10) 0px, transparent 50%),
+    radial-gradient(at 50% 50%, rgba(16, 185, 129, 0.08) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(251, 146, 60, 0.08) 0px, transparent 50%);
+}
+
+.luminous-bg-dark {
+  background-color: #0b0f19;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(14, 165, 233, 0.15) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(168, 85, 247, 0.15) 0px, transparent 50%),
+    radial-gradient(at 50% 100%, rgba(16, 185, 129, 0.10) 0px, transparent 50%);
 }

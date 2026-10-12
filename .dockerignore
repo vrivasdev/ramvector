@@ -1,0 +1,11 @@
+node_modules
+dist
+.git
+.agents
+agents
+skills
+docs
+*.log
+*.tsbuildinfo
+.vscode
+.idea

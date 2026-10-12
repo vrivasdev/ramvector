@@ -23,3 +23,6 @@ Thumbs.db
 *.njsproj
 *.sln
 *.sw?
+*.tsbuildinfo
+vite.config.d.ts
+vite.config.js
